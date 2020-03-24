@@ -1,0 +1,114 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>臺北市立萬芳高級中學『學生假日生活輔導』家長通知單</title>
+    <style>
+   body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #FAFAFA;
+        font: 12pt "Tahoma";
+         font-family: "Arial","微軟正黑體", sans-serif;
+    }
+    * {
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+    }
+    .page {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 10mm auto;
+        border: 1px #D3D3D3 solid;
+        border-radius: 5px;
+        background: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .subpage {
+        padding: 1cm;
+        /*border: 5px red solid;*/
+        height: 257mm;
+        /*outline: 2cm #FFEAEA solid;*/
+    }
+    
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    @media print {
+        html, body {
+            width: 210mm;
+            height: 297mm;        
+        }
+        .page {
+            margin: 0;
+            border: initial;
+            border-radius: initial;
+            width: initial;
+            min-height: initial;
+            box-shadow: initial;
+            background: initial;
+            page-break-after: always;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="book">
+    {{range .Data}}
+    {{if .Row}}
+    <div class="page">
+        <div class="subpage">
+     {{end}}
+    <p align="center"><strong>臺北市立萬芳高級中學『學生假日生活輔導』家長通知單</strong></p>
+    <p>國中部 {{.Class}} 班 {{.Id}} 號學生 {{.Name}} 因 {{.Event}} 請於 {{.ArrTime}} 到校參加『假日生活輔導』教育，敦請貴家長共同督促子弟遵守學校規定，
+    並於 {{.ReturnTime}} 將通知單繳回繳給假日生活輔導負責人員。</p>
+    <p>家長勾選:</p>
+    <p><input type="checkbox" id="vehicle1" name="vehicle1" >
+        <label for="vehicle1"> 假日生活輔導</label><br/></p>
+    <p style="display: inline; margin-right: 50px;"><input type="checkbox" id="vehicle2" name="vehicle2" >
+    <label for="vehicle2"> 校規處份</label> </p> 
+    <p style="display: inline;">家長簽章： </p>
+    <p align="right">萬芳高中學務處 敬上</p>
+    <div class="today" align="right" style="font-size: 14px;"></div>
+    <div style="font-size: 12px;">
+    <p>附記:</p>
+    <ol>
+    <li>勾選校規處份者：視違反校規之情節予以適當之處份（警告、小過），不再實施假日生活輔導；有關「學生獎懲實施要點」請參閱萬芳學生手冊。</li>
+    <li>凡因事、病未能如期到校實施者，請持證明於3日內完成請假手續，延期實施以1次為限，無故未到者將依校規辦理懲處。</li>
+    <li>參加人員請於上述時間著校服至行政大樓前廣場集合；請勿遲到，遲到者一律不予參加。</li>
+    </ol>
+    </div>
+    {{if .Row}}
+    <br/>
+    	<hr size="8px" align="center" width="100%" style="height: 0; border-top: 1px dashed grey;">
+   <br/>
+    {{end}}		
+  {{if eq .Row false}}
+</div>
+</div>
+  {{end}}
+   {{end}}
+
+   </div>
+</body>
+	<script>
+  today = new Date();
+var Y ="2020";
+if (today.getYear() < 1999) {
+    Y = 1900+today.getYear();
+    Y = (today.getYear()-11);
+  } else {
+    Y = today.getYear();
+    Y = (today.getYear()-1911);
+  }
+  var i;
+  for (i = 0; i < document.getElementsByClassName("today").length; i++) {
+    document.getElementsByClassName("today")[i].innerHTML = "民國 "+ Y +" 年 " + (today.getMonth()+1) + " 月 " + today.getDate() +" 日";
+  } 
+  
+	</script>
+
+</html>
