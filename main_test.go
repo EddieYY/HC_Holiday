@@ -46,7 +46,7 @@ func copy(src, dst string) (int64, error) {
 	return nBytes, err
 }
 
-func readxlsx(filn string) []Dtexcel {
+/*func readxlsx(filn string) []Dtexcel {
 	xlFile, err := xlsx.OpenFile(filn)
 	if err != nil {
 		fmt.Printf("open failed: %s\n", err)
@@ -67,10 +67,26 @@ func readxlsx(filn string) []Dtexcel {
 		DT = append(DT, dt)
 	}
 	return DT
+}*/
+
+func readxlsx(filn string) []*Dtexcel {
+	var dataSlice [][][]string
+	dataSlice, _ = xlsx.FileToSlice(filn)
+	DT := []*Dtexcel{}
+	for i, v := range dataSlice[0] {
+		if i != 0 && v[0] != "" {
+			dt := &Dtexcel{(i % 2) != 0, v[0], v[1], v[2], v[3], v[4], v[5]}
+			DT = append(DT, dt)
+		}
+	}
+	return DT
 }
 
 func main() {
 	DT := readxlsx("./Data/excel.xlsx")
+
+	//fmt.Printf("%+V", DT)
+
 	outfile := "./outfile_" + time.Now().Format("20060102150405") + ".html"
 	copy("./Data/index.html", outfile)
 	tpl, err := template.ParseFiles(outfile)
@@ -82,7 +98,7 @@ func main() {
 		log.Println("create file: ", err)
 		return
 	}
-	err = tpl.Execute(f, map[string][]Dtexcel{"Data": DT})
+	err = tpl.Execute(f, map[string][]*Dtexcel{"Data": DT})
 	if err != nil {
 		log.Fatalln(err)
 	}
