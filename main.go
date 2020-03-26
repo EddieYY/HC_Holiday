@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/tealeg/xlsx"
+	"html/template"
 	"io"
 	"log"
 	"os"
-	"text/template"
 	"time"
 )
 
@@ -45,38 +45,50 @@ func copy(src, dst string) (int64, error) {
 	return nBytes, err
 }
 
-func main() {
-	//fmt.Println("vim-go")
-	excelFileName := "./Data/excel.xlsx"
-	xlFile, err := xlsx.OpenFile(excelFileName)
+/*func readxlsx(filn string) []Dtexcel {
+	xlFile, err := xlsx.OpenFile(filn)
 	if err != nil {
 		fmt.Printf("open failed: %s\n", err)
 	}
 	sheet := xlFile.Sheet["Sheet1"]
-	//fmt.Printf("open failed: %s\n", sheet)
 	var DT []Dtexcel
-	for r, row := range sheet.Rows {
+	for r := 1; r < sheet.MaxRow; r++ {
 		var dt Dtexcel
-		if r != 0 {
-			/*for j, cell := range row.Cells {
-				text := cell.String()
-				fmt.Printf("%s\n", text)
-			}*/
-			text0 := (r % 2) != 0
-			text1 := row.Cells[0].String()
-			text2 := row.Cells[1].String()
-			text3 := row.Cells[2].String()
-			text4 := row.Cells[3].String()
-			text5 := row.Cells[4].String()
-			text6 := row.Cells[5].String()
-			dt = Dtexcel{text0, text1, text2, text3, text4, text5, text6}
+		//cel, _ := sheet.Cell(r, 0)
+		text0 := (r % 2) != 0
+		text1, _ := sheet.Cell(r, 0)
+		text2, _ := sheet.Cell(r, 1)
+		text3, _ := sheet.Cell(r, 2)
+		text4, _ := sheet.Cell(r, 3)
+		text5, _ := sheet.Cell(r, 4)
+		text6, _ := sheet.Cell(r, 5)
+		dt = Dtexcel{text0, text1.Value, text2.Value, text3.Value, text4.Value, text5.Value, text6.Value}
+		DT = append(DT, dt)
+	}
+	return DT
+}*/
+
+func readxlsx(filn string) []*Dtexcel {
+	var dataSlice [][][]string
+	dataSlice, _ = xlsx.FileToSlice(filn)
+	DT := []*Dtexcel{}
+	//fmt.Printf("%s", dataSlice[0])
+	for i, v := range dataSlice[0] {
+		if i != 0 && len(v) > 0 {
+			dt := &Dtexcel{(i % 2) != 0, v[0], v[1], v[2], v[3], v[4], v[5]}
 			DT = append(DT, dt)
 		}
 	}
-	//fmt.Printf("%s\n", DT)
+	return DT
+}
+
+func main() {
+	DT := readxlsx("./Data/excel.xlsx")
+
+	//fmt.Printf("%+V", DT)
+
 	outfile := "./outfile_" + time.Now().Format("20060102150405") + ".html"
 	copy("./Data/index.html", outfile)
-
 	tpl, err := template.ParseFiles(outfile)
 	if err != nil {
 		log.Fatalln(err)
@@ -86,12 +98,9 @@ func main() {
 		log.Println("create file: ", err)
 		return
 	}
-
-	//tpl.Funcs(template.FuncMap{"mod": func(i, j int) bool { return i%j != 0 }})
-	err = tpl.Execute(f, map[string][]Dtexcel{"Data": DT})
+	err = tpl.Execute(f, map[string][]*Dtexcel{"Data": DT})
 	if err != nil {
 		log.Fatalln(err)
 	}
 	f.Close()
-
 }
